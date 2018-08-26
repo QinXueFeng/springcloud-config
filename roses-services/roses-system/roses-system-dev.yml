@@ -1,5 +1,5 @@
 server:
-  port: 8000
+  port: 8001
 
 roses:
   log:
@@ -9,22 +9,15 @@ roses:
 
 jwt:
   secret: abcdefg
-  expiration: 604800
+  expiration: 82800
 
 spring:
   application:
-    name: roses-gateway
-  http:
-    encoding:
-      enabled: true
-      charset: UTF-8
-      force: true
-  aop:
-    proxy-target-class: true
-  servlet:
-    multipart:
-      max-file-size: 20MB
-      max-request-size: 30MB
+    name: roses-system
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/roses_system?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
 #  kafka:
 #    bootstrap-servers: 127.0.0.1:9092
 #    listener:
@@ -40,15 +33,18 @@ spring:
 #      auto-offset-reset: earliest
 #      maxPollRecords: 500
 
-zuul:
-  add-host-header: true
-  routes:
-    roses-system: /roses-system/**
-    api-gate:
-      path: /doorAction/**
-      url: forward:/doorAction  #以/authAction开头的请求转发到本网关的控制器
-  retryable: false              #转发重试关闭
-  sensitive-headers:
+mybatis-plus:
+  typeAliasesPackage: com.stylefeng.roses.system.modular.entity
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 20   #服务过期时间配置,超过这个时间没有接收到心跳EurekaServer就会将这个实例剔除(默认90秒)
+    lease-renewal-interval-in-seconds: 5       #服务刷新时间配置，每隔这个时间会主动心跳一次(默认30秒)
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka
+    registry-fetch-interval-seconds: 10  #重新刷新服务地址的时间
 
 feign:
   hystrix:
@@ -60,23 +56,13 @@ feign:
         readTimeout: 3000    #处理请求的超时时间 单位：毫秒
         errorDecoder: com.stylefeng.roses.core.feign.RosesFeignErrorDecoder
         requestInterceptors:
-        - com.stylefeng.roses.gateway.core.feign.ZuulFeignHeaderProcessInterceptor
+        - com.stylefeng.roses.core.feign.RosesFeignHeaderProcessInterceptor
 
 hystrix:
   command:
     default:
       execution:
         isolation:
-          strategy: SEMAPHORE
+          strategy: SEMAPHORE #为了RosesFeignHeaderProcessInterceptor
           thread:
             timeoutInMilliseconds: 2000
-
-eureka:
-  instance:
-    prefer-ip-address: true
-    lease-expiration-duration-in-seconds: 20   #服务过期时间配置,超过这个时间没有接收到心跳EurekaServer就会将这个实例剔除(默认90秒)
-    lease-renewal-interval-in-seconds: 5       #服务刷新时间配置，每隔这个时间会主动心跳一次(默认30秒)
-  client:
-    service-url:
-      defaultZone: http://127.0.0.1:8761/eureka
-    registry-fetch-interval-seconds: 10  #重新刷新服务地址的时间

@@ -1,56 +1,75 @@
 server:
   port: 8000
 
-jwt:
-  header: Authorization           #http请求头所需要的字段
-  secret: mySecret                #jwt秘钥
-  expiration: 604800              #7天 单位:秒
-  auth-path: /authService/login   #认证请求的路径
-
-develop:
-  open: false
-  user-id: 1
-
 roses:
-  sign:
-    time: 600 #签名默认失效时间 600秒
+  log:
+    kafka: false
+    trace: false
+    level: error,info
 
-log:
-  path: /opt/logs/roses-gateway
+jwt:
+  secret: abcdefg
+  expiration: 604800
 
 spring:
   application:
     name: roses-gateway
+  http:
+    encoding:
+      enabled: true
+      charset: UTF-8
+      force: true
+  aop:
+    proxy-target-class: true
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 30MB
+#  kafka:
+#    bootstrap-servers: 127.0.0.1:9092
+#    listener:
+#      type: BATCH
+#    producer:
+#      batchSize: 500
+#      keySerializer: org.apache.kafka.common.serialization.StringSerializer
+#      valueSerializer: com.stylefeng.roses.kernel.logger.serizlizer.FastjsonKafkaSerializer
+#    consumer:
+#      group-id: commonLogList
+#      keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      valueDeserializer: com.stylefeng.roses.biz.log.core.serilizer.FastjsonKafkaDeserializer
+#      auto-offset-reset: earliest
+#      maxPollRecords: 500
 
 zuul:
   add-host-header: true
   routes:
-    roses-auth: /roses-auth/**
-    roses-message-service: /roses-message-service/**
-    roses-account: /roses-account/**
-    roses-order: /roses-order/**
+    roses-system: /roses-system/**
     api-gate:
-      path: /authService/**
-      url: forward:/authService  #以/authService开头的请求转发到本网关的控制器
-  retryable: false         #转发重试关闭
+      path: /doorAction/**
+      url: forward:/doorAction  #以/authAction开头的请求转发到本网关的控制器
+  retryable: false              #转发重试关闭
+  sensitive-headers:
 
 feign:
   hystrix:
-    enabled: true
-
-ribbon:
-  connect-imeout: 300     #创建连接的超时时间 单位：毫秒
-  read-timeout: 2000      #处理请求的超时时间 单位：毫秒
-  max-auto-retries-next-server: 0 #切换实例的重试次数
-  max-auto-retries: 0     #对当前实例的重试次数
+    enabled: false
+  client:
+    config:
+      default:
+        connectTimeout: 300  #创建连接的超时时间 单位：毫秒
+        readTimeout: 3000    #处理请求的超时时间 单位：毫秒
+        errorDecoder: com.stylefeng.roses.core.feign.RosesFeignErrorDecoder
+        requestInterceptors:
+        - com.stylefeng.roses.gateway.core.feign.ZuulFeignHeaderProcessInterceptor
 
 hystrix:
   command:
     default:
       execution:
         isolation:
+          strategy: SEMAPHORE
           thread:
-            timeoutInMilliseconds: 3000   #hystrix线程超过3秒熔断，数值大于ribbon的处理超时时间，留给ribbon重试，否则直接熔断，重试就没有意义了
+            timeoutInMilliseconds: 2000
 
 eureka:
   instance:
@@ -61,12 +80,3 @@ eureka:
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
     registry-fetch-interval-seconds: 10  #重新刷新服务地址的时间
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: ALWAYS
