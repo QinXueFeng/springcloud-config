@@ -12,8 +12,6 @@ jwt:
   expiration: 604800
 
 spring:
-  application:
-    name: roses-gateway
   http:
     encoding:
       enabled: true

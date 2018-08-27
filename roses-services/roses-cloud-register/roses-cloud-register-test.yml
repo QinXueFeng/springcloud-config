@@ -1,10 +1,6 @@
 server:
   port: 8761
 
-spring:
-  application:
-    name: roses-cloud-register
-
 eureka:
   server:
     #是否开启自我保护（运行期间spring会统计信条失败的比例在15分钟之内是否低于85%，如果不低于85%，Eureka会将实例注册信息保护起来，让这些实例不会过期）
