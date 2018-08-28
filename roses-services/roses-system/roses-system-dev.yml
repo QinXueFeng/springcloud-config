@@ -7,6 +7,15 @@ roses:
     trace: true
     level: error,info
 
+aliyun:
+  oss:
+    access-key-id: xxx
+    access-key-secret: xxx
+    expired-minutes: 30
+    bucket-name: xxx
+    endpoint: http://oss-cn-beijing.aliyuncs.com
+    internet-file-url: https://xxx-xxx.oss-cn-beijing.aliyuncs.com/
+
 jwt:
   secret: abcdefg
   expiration: 82800
