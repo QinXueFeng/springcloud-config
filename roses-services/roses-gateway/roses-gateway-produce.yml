@@ -31,12 +31,6 @@ spring:
       batchSize: 500
       keySerializer: org.apache.kafka.common.serialization.StringSerializer
       valueSerializer: com.stylefeng.roses.kernel.logger.serizlizer.FastjsonKafkaSerializer
-    consumer:
-      group-id: commonLogList
-      keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
-      valueDeserializer: com.stylefeng.roses.biz.log.core.serilizer.FastjsonKafkaDeserializer
-      auto-offset-reset: earliest
-      maxPollRecords: 500
 
 zuul:
   add-host-header: true
