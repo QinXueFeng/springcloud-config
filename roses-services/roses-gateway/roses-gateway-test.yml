@@ -3,8 +3,8 @@ server:
 
 roses:
   log:
-    kafka: false
-    trace: false
+    kafka: true
+    trace: true
     level: error,info
 
 jwt:
@@ -23,20 +23,20 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 30MB
-#  kafka:
-#    bootstrap-servers: 127.0.0.1:9092
-#    listener:
-#      type: BATCH
-#    producer:
-#      batchSize: 500
-#      keySerializer: org.apache.kafka.common.serialization.StringSerializer
-#      valueSerializer: com.stylefeng.roses.kernel.logger.serizlizer.FastjsonKafkaSerializer
-#    consumer:
-#      group-id: commonLogList
-#      keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      valueDeserializer: com.stylefeng.roses.biz.log.core.serilizer.FastjsonKafkaDeserializer
-#      auto-offset-reset: earliest
-#      maxPollRecords: 500
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092
+    listener:
+      type: BATCH
+    producer:
+      batchSize: 500
+      keySerializer: org.apache.kafka.common.serialization.StringSerializer
+      valueSerializer: com.stylefeng.roses.kernel.logger.serizlizer.FastjsonKafkaSerializer
+    consumer:
+      group-id: commonLogList
+      keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+      valueDeserializer: com.stylefeng.roses.biz.log.core.serilizer.FastjsonKafkaDeserializer
+      auto-offset-reset: earliest
+      maxPollRecords: 500
 
 zuul:
   add-host-header: true
